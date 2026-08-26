@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeQuest Flex — Desafios de Lógica</title>
+<style>
+:root{
+  --bg:#07101f;--panel:#0d1930;--panel2:#101f3b;--line:#243654;
+  --text:#edf5ff;--muted:#9fb0c9;--green:#35e887;--cyan:#45d9ff;
+  --purple:#a56bff;--yellow:#ffd34e;--red:#ff647c;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 80% 0%,#15284a 0,#07101f 42%,#050b16 100%);
+font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--text);min-height:100vh}
+button,textarea{font:inherit}
+button{cursor:pointer}
+header{height:78px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:12px 24px}
+.logo{display:flex;align-items:center;gap:12px;min-width:270px}
+.logoMark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#17345b;color:var(--cyan);font-size:21px;font-weight:800}
+.logo h1{margin:0;font-size:27px;letter-spacing:.5px}.logo h1 span{color:var(--green)}
+.logo small{display:block;color:var(--muted);font-size:13px;margin-top:1px}
+.topstats{display:flex;gap:12px;flex:1;justify-content:center}
+.stat{background:rgba(16,31,59,.75);border:1px solid var(--line);border-radius:14px;padding:9px 18px;min-width:180px}
+.stat b{display:block;font-size:13px;color:var(--muted);font-weight:500}.stat strong{font-size:18px}
+.energyBar{height:8px;background:#030914;border-radius:10px;overflow:hidden;margin-top:6px}.energyFill{height:100%;background:var(--green);width:100%;transition:.3s}
+.levelBadge{border:1px solid var(--purple);color:#d7bcff;border-radius:25px;padding:10px 18px;white-space:nowrap}
+.help{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:10px;padding:11px 15px}
+main{display:grid;grid-template-columns:285px minmax(380px,1.05fr) minmax(430px,1fr);gap:12px;padding:14px;max-width:1500px;margin:auto}
+.panel{background:linear-gradient(145deg,rgba(15,30,57,.96),rgba(8,18,35,.96));border:1px solid var(--line);border-radius:11px;box-shadow:0 10px 35px rgba(0,0,0,.18)}
+.panelTitle{font-weight:800;letter-spacing:.5px;color:#bba0ff;padding:14px 15px 8px}
+.missions{padding:8px}
+.mission{display:flex;align-items:center;gap:12px;padding:12px 10px;margin-bottom:8px;border:1px solid transparent;border-radius:9px;background:#0b172c;color:#b9c6da}
+.mission.active{border-color:var(--purple);background:linear-gradient(90deg,#31214e,#17233d);color:white}
+.mission.done .num{background:var(--green);color:#082015}.mission.locked{opacity:.55}
+.num{width:35px;height:35px;border-radius:50%;display:grid;place-items:center;background:#273750;font-weight:800;flex:none}
+.mission b{display:block}.mission span{font-size:12px;color:var(--muted)}
+.mission .check{margin-left:auto;color:var(--green);font-weight:900}
+.mission .lock{margin-left:auto}
+.missionCard{margin:10px;padding:14px;background:#17133b;border:1px solid #523c8a;border-radius:10px}
+.missionCard h3{margin:0 0 8px;color:#d4b7ff}.missionCard p{line-height:1.55;color:#d8dced;font-size:14px}
+.reset{width:100%;padding:10px;border:1px solid #52607c;background:#25304a;color:#fff;border-radius:8px;margin-top:10px}
+.section{padding:0 12px 12px}
+.titleRow{display:flex;justify-content:space-between;align-items:center;padding:13px 2px 8px}.titleRow h2{font-size:16px;margin:0}.titleRow small{color:var(--muted)}
+.map{padding:8px;display:grid;grid-template-columns:repeat(6,1fr);aspect-ratio:1.35;border:1px solid #41506a;border-radius:7px;background:#050c19;overflow:hidden}
+.cell{border:1px solid #26344c;display:grid;place-items:center;position:relative;font-size:27px}
+.cell.robot{font-size:34px;filter:drop-shadow(0 0 8px #46d9ff)}
+.cell.obstacle{font-size:30px}.cell.coin{font-size:24px}.cell.goal{font-size:28px}
+.robotArrow{position:absolute;font-size:11px;right:4px;bottom:3px;color:var(--cyan)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;color:#c4cfdf;font-size:12px;padding:9px 4px}.legend span{display:flex;align-items:center;gap:5px}
+.editorWrap{padding:10px;background:#080f1b;border:1px solid #33415a;border-radius:8px}
+textarea{width:100%;height:330px;resize:vertical;background:#090f19;color:#d9e8f6;border:0;outline:0;line-height:1.55;font-family:"Cascadia Code",Consolas,monospace;font-size:14px}
+.actions{display:flex;gap:10px;margin-top:10px}.run{background:var(--green);color:#06150e;border:0;border-radius:8px;padding:12px 18px;font-weight:900;flex:1}.secondary{background:#172b4d;color:#cbe2ff;border:1px solid #38557e;border-radius:8px;padding:12px 15px}
+.console{height:165px;overflow:auto;background:#050b13;border:1px solid #26344c;border-radius:8px;padding:10px;font-family:Consolas,monospace;font-size:12px;line-height:1.6}.log{color:#8de8a9}.warn{color:#ffd35e}.err{color:#ff758b}.info{color:#72cfff}
+.statusGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.status{padding:12px;background:#0a1528;border:1px solid var(--line);border-radius:8px}.status label{color:var(--muted);font-size:11px}.status strong{display:block;font-size:17px;margin-top:5px}
+.commands{margin-top:10px;border:1px solid var(--line);border-radius:8px;overflow:hidden}.commands h3{font-size:13px;color:#bda4ff;margin:0;padding:10px;background:#111d38}.cmdgrid{display:grid;grid-template-columns:1fr 1fr}.cmd{padding:9px 11px;border-top:1px solid var(--line);font-size:11px}.cmd code{color:var(--cyan);display:block;margin-bottom:3px}.cmd span{color:var(--muted)}
+.tip{margin:10px -2px 0;padding:10px 12px;border-radius:8px;background:#1a1735;color:#d9cfff;font-size:12px}
+footer{max-width:1500px;margin:auto;padding:8px 15px 20px;color:#9eabc0;font-size:12px;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;padding:20px;z-index:10}.modal.open{display:grid}.modalBox{max-width:620px;background:#0d1930;border:1px solid #41547a;border-radius:14px;padding:22px;box-shadow:0 20px 70px #000}.modalBox h2{margin-top:0}.modalBox li{margin:9px 0;color:#c8d3e5}.close{float:right;background:transparent;color:white;border:0;font-size:20px}
+@media(max-width:1100px){main{grid-template-columns:260px 1fr}.right{grid-column:1/-1}.topstats{display:none}}
+@media(max-width:760px){header{height:auto;flex-wrap:wrap}.logo{min-width:auto}.levelBadge{margin-left:auto}main{grid-template-columns:1fr;padding:8px}.right{grid-column:auto}.map{aspect-ratio:1}.statusGrid{grid-template-columns:1fr}.cmdgrid{grid-template-columns:1fr}}
+
+/* ===== CODEQUEST FLEX: acessibilidade e personalização ===== */
+:root{--focus:#ffffff;--fontScale:1}
+body{font-size:calc(16px * var(--fontScale));transition:filter .2s}
+button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.accessBar{display:flex;gap:7px;align-items:center;flex-wrap:wrap;padding:9px 12px;border-bottom:1px solid var(--line);background:#08152a}
+.accessBar .modeBtn{background:#16294a;color:#dcecff;border:1px solid #3a5680;border-radius:8px;padding:8px 10px}
+.accessBar .modeBtn.active{border-color:var(--green);box-shadow:0 0 0 1px var(--green) inset}
+.accessPanel{display:none;padding:12px;border-bottom:1px solid var(--line);background:#0a162b}
+.accessPanel.open{display:block}.accessGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.setting{background:#101f39;border:1px solid var(--line);border-radius:9px;padding:9px}.setting label{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}.setting select,.setting button{width:100%;background:#0a1425;color:#eef5ff;border:1px solid #3a4f70;border-radius:7px;padding:7px}
+.guided{margin-top:10px;border:1px solid #4e3d85;border-radius:9px;background:#151436;padding:12px}.guided h3{margin:0 0 7px;color:#d1b8ff;font-size:14px}.guided p{margin:5px 0;color:#d8dced;line-height:1.5;font-size:13px}.step{display:none}.step.active{display:block}.guideActions{display:flex;gap:7px;margin-top:9px}.guideActions button{background:#202c4d;color:white;border:1px solid #42577d;border-radius:7px;padding:7px 10px}.textMap{display:none;margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#081321;color:#d8e3f1;line-height:1.55;font-size:12px}.textMap.show{display:block}
+.flexMode .cell{font-size:calc(27px * var(--fontScale))}.flexMode .cell.robot{font-size:calc(34px * var(--fontScale))}.flexMode .console{font-size:calc(12px * var(--fontScale))}.flexMode .missionCard p,.flexMode .mission span{font-size:calc(14px * var(--fontScale))}
+.highContrast{--bg:#000;--panel:#000;--panel2:#000;--line:#fff;--text:#fff;--muted:#fff;--green:#00ff66;--cyan:#00ffff;--purple:#ff80ff;--yellow:#ffff00;--red:#ff4060}
+.highContrast body{background:#000}.highContrast .panel,.highContrast .stat,.highContrast .mission,.highContrast .editorWrap,.highContrast .console,.highContrast .status,.highContrast .commands,.highContrast .guided,.highContrast .setting{background:#000;border-color:#fff}
+.reduceMotion *, .reduceMotion *::before,.reduceMotion *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+.simplified .decorativeHint{display:none}.simplified .legend{font-size:13px}.simplified .map{max-width:560px}.simplified .commands{margin-top:14px}
+.visually-hidden{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.live{position:absolute;left:-9999px}.successBox{margin-top:9px;padding:10px;border-radius:8px;border:1px solid var(--green);background:#0c2a1c;color:#bfffd6;display:none}.successBox.show{display:block}
+@media(max-width:900px){.accessGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.accessGrid{grid-template-columns:1fr}.accessBar{align-items:stretch}.accessBar .modeBtn{flex:1}.guided{font-size:14px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><div class="logoMark">&lt;/&gt;</div><div><h1>CODE<span>QUEST</span></h1><small>Desafios de Lógica</small></div></div>
+  <div class="topstats">
+    <div class="stat"><b>🏆 Pontuação</b><strong id="score">0</strong></div>
+    <div class="stat"><b>⚡ Energia <span id="energyText">10 / 10</span></b><div class="energyBar"><div id="energyFill" class="energyFill"></div></div></div>
+  </div>
+  <div class="levelBadge">☰ NÍVEL <b id="levelTop">1 / 6</b></div>
+  <button class="help" onclick="openHelp()">❔ Como jogar</button>
+</header>
+<div class="accessBar" aria-label="Controles de acessibilidade e modo de aprendizagem">
+  <strong id="modeLabel">Modo Flex</strong>
+  <button class="modeBtn active" id="adventureBtn" onclick="setMode('adventure')" aria-pressed="false">🎮 Modo Aventura</button>
+  <button class="modeBtn active" id="flexBtn" onclick="setMode('flex')" aria-pressed="true">🧩 Modo Flex</button>
+  <button class="modeBtn" onclick="toggleAccessPanel()" aria-expanded="false" id="accessBtn">⚙️ Acessibilidade</button>
+</div>
+<div class="accessPanel" id="accessPanel">
+  <div class="accessGrid">
+    <div class="setting"><label for="fontSize">Tamanho do texto</label><select id="fontSize" onchange="setFontSize(this.value)"><option value="1">Normal</option><option value="1.12">Grande</option><option value="1.25">Muito grande</option></select></div>
+    <div class="setting"><label for="contrast">Contraste</label><select id="contrast" onchange="setContrast(this.value)"><option value="normal">Normal</option><option value="high">Alto contraste</option></select></div>
+    <div class="setting"><label for="motion">Animações</label><select id="motion" onchange="setMotion(this.value)"><option value="normal">Ativadas</option><option value="reduced">Reduzidas</option></select></div>
+    <div class="setting"><label for="support">Nível de suporte</label><select id="support" onchange="setSupport(this.value)"><option value="guided">Guiado</option><option value="autonomous">Autônomo</option><option value="scaffold">Estrutura</option></select></div>
+  </div>
+  <div class="accessGrid" style="margin-top:9px">
+    <div class="setting"><label>Áudio</label><button onclick="toggleAudio()" id="audioBtn">🔊 Áudio ativado</button></div>
+    <div class="setting"><label>Mapa</label><button onclick="toggleTextMap()" id="textMapBtn">📋 Mostrar descrição textual</button></div>
+    <div class="setting"><label>Foco</label><button onclick="focusCode()">⌨️ Ir para o código</button></div>
+    <div class="setting"><label>Leitura</label><button onclick="speakMission()">🔈 Ler missão</button></div>
+  </div>
+</div>
+
+<main>
+  <aside class="panel">
+    <div class="panelTitle">MISSÕES</div>
+    <div class="missions" id="missions"></div>
+    <div class="missionCard">
+      <h3>SUA MISSÃO</h3>
+      <p id="missionText"></p>
+      <div class="guided" id="guidedPanel" aria-live="polite">
+        <h3 id="guideTitle">🧭 Apoio passo a passo</h3>
+        <div id="guideSteps"></div>
+        <div class="guideActions"><button onclick="previousGuide()">← Anterior</button><button onclick="nextGuide()">Próximo →</button></div>
+      </div>
+      <div class="textMap" id="textMap" aria-live="polite"></div>
+      <button class="reset" onclick="resetLevel()">↻ Reiniciar Nível</button>
+    </div>
+  </aside>
+
+  <section class="panel">
+    <div class="section">
+      <div class="titleRow"><h2>MAPA DO DESAFIO</h2><small id="mapHint">Use seu código para mover o robô</small></div>
+      <div class="map" id="map" role="img" aria-label="Mapa do desafio"></div>
+      <div class="legend">
+        <span>🤖 Robô</span><span>🪨 Obstáculo</span><span>🪙 Moeda (+10)</span><span>🏁 Objetivo</span>
+      </div>
+    </div>
+    <div class="section">
+      <div class="titleRow"><h2>SAÍDA DO PROGRAMA</h2><button class="secondary" onclick="clearConsole()">Limpar</button></div>
+      <div class="console" id="console" role="log" aria-live="polite" aria-label="Saída do programa"></div>
+    </div>
+  </section>
+
+  <section class="panel right">
+    <div class="section">
+      <div class="titleRow"><h2>SEU CÓDIGO <small>(JavaScript Simplificado)</small></h2>
+        <button class="secondary" onclick="loadExample()">Exemplo</button>
+      </div>
+      <div class="editorWrap"><label class="visually-hidden" for="code">Editor de código</label><textarea id="code" aria-label="Editor de código JavaScript" spellcheck="false"></textarea></div>
+      <div class="actions">
+        <button class="run" onclick="runCode()">▶ EXECUTAR CÓDIGO</button>
+        <button class="secondary" onclick="showHint()">💡 DICAS</button>
+      </div>
+      <div class="tip" id="tip">Dica: pense na sequência de ações antes de executar.</div>
+    </div>
+
+    <div class="section">
+      <div class="titleRow"><h2>STATUS</h2></div>
+      <div class="statusGrid">
+        <div class="status"><label>❤️ Energia</label><strong id="statusEnergy">10 / 10</strong></div>
+        <div class="status"><label>🪙 Pontos</label><strong id="statusScore">0</strong></div>
+        <div class="status"><label>🏁 Objetivo</label><strong id="statusGoal">Não alcançado</strong></div>
+      </div>
+      <div class="commands">
+        <h3>COMANDOS DISPONÍVEIS</h3>
+        <div class="cmdgrid">
+          <div class="cmd"><code>moverFrente();</code><span>Move o robô uma casa para frente</span></div>
+          <div class="cmd"><code>virarEsquerda();</code><span>Vira o robô para a esquerda</span></div>
+          <div class="cmd"><code>virarDireita();</code><span>Vira o robô para a direita</span></div>
+          <div class="cmd"><code>coletaMoeda();</code><span>Coleta a moeda na posição atual</span></div>
+          <div class="cmd"><code>temMoeda();</code><span>Retorna verdadeiro se houver moeda</span></div>
+          <div class="cmd"><code>obstaculoFrente();</code><span>Retorna verdadeiro se houver obstáculo</span></div>
+          <div class="cmd"><code>energia;</code><span>Quantidade de energia restante</span></div>
+          <div class="cmd"><code>pontos;</code><span>Pontuação atual</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>CODEQUEST • Experiência de aprendizagem para praticar pensamento computacional, algoritmos e lógica de programação.</footer>
+
+<div class="modal" id="helpModal">
+ <div class="modalBox"><button class="close" onclick="closeHelp()">×</button>
+ <h2>🎮 Como jogar</h2>
+ <ol>
+   <li>Leia a missão e observe o mapa.</li>
+   <li>Escreva o algoritmo no editor usando os comandos disponíveis.</li>
+   <li>Clique em <b>EXECUTAR CÓDIGO</b> e observe o robô.</li>
+   <li>Se algo der errado, leia o console, corrija o código e tente novamente.</li>
+   <li>Ao concluir um nível, o próximo é desbloqueado.</li>
+ </ol>
+ <p><b>Importante:</b> o editor usa JavaScript real, mas os desafios são avaliados por um pequeno interpretador seguro criado nesta página.</p>
+ </div>
+</div>
+
+<script>
+const levels=[
+ {name:"Aprendiz",concept:"Sequência",mission:"Leve o robô até a bandeira usando apenas uma sequência de movimentos.",start:[5,0],dir:0,goal:[0,5],coins:[],obstacles:[],maxEnergy:12,
+  example:`// Você está olhando para cima (↑).\\n// Tente combinar moverFrente() e virarDireita().\\n\\nmoverFrente();\\nmoverFrente();\\nmoverFrente();\\nmoverFrente();\\nmoverFrente();\\nvirarDireita();\\nmoverFrente();`},
+ {name:"Explorador",concept:"Variáveis",mission:"Colete as moedas e chegue à bandeira. Cada moeda vale 10 pontos.",start:[5,0],dir:0,goal:[0,5],coins:[[4,1],[2,3]],obstacles:[],maxEnergy:18,
+  example:`// Explore o mapa e colete as moedas.\\n// Energia e pontos são variáveis disponíveis.\\n\\nmoverFrente();\\nmoverFrente();\\nif (temMoeda()) { coletaMoeda(); }`},
+ {name:"Estrategista",concept:"Condicionais",mission:"Chegue à bandeira desviando dos obstáculos. Use if/else para tomar decisões.",start:[5,0],dir:0,goal:[0,5],coins:[[3,1],[2,4]],obstacles:[[4,1],[4,2],[4,3],[2,2],[1,4]],maxEnergy:25,
+  example:`// Use uma condição para decidir o caminho.\\n// Exemplo:\\n// if (obstaculoFrente()) {\\n//   virarDireita();\\n// } else {\\n//   moverFrente();\\n// }\\n\\nif (obstaculoFrente()) {\\n  virarDireita();\\n} else {\\n  moverFrente();\\n}`},
+ {name:"Automatizador",concept:"Repetições",mission:"Use um laço de repetição para automatizar seus movimentos e chegar ao objetivo.",start:[5,0],dir:0,goal:[0,5],coins:[[4,1],[3,3]],obstacles:[[4,2],[2,2],[2,3],[1,3]],maxEnergy:35,
+  example:`// Repita ações para não escrever tudo manualmente.\\nfor (let i = 0; i < 5; i++) {\\n  moverFrente();\\n}\\nvirarDireita();\\nfor (let i = 0; i < 5; i++) {\\n  moverFrente();\\n}`},
+ {name:"Desenvolvedor",concept:"Funções",mission:"Crie uma função para organizar uma estratégia reutilizável e complete o percurso.",start:[5,0],dir:0,goal:[0,5],coins:[[5,2],[3,3],[1,5]],obstacles:[[4,2],[3,2],[2,4]],maxEnergy:40,
+  example:`function passoSeguro() {\\n  if (obstaculoFrente()) {\\n    virarDireita();\\n  } else {\\n    moverFrente();\\n  }\\n}\\n\\nfor (let i = 0; i < 12; i++) {\\n  passoSeguro();\\n}`},
+ {name:"Mestre",concept:"Projeto Final",mission:"Crie sua própria estratégia: alcance a bandeira e tente coletar todas as moedas.",start:[5,0],dir:0,goal:[0,5],coins:[[5,2],[3,1],[2,4],[1,5]],obstacles:[[4,2],[3,2],[3,4],[1,3]],maxEnergy:45,
+  example:`// PROJETO FINAL\\n// Crie sua própria solução!\\n// Requisitos: chegar à bandeira e coletar moedas.\\n\\nfunction explorar() {\\n  if (obstaculoFrente()) {\\n    virarDireita();\\n  } else {\\n    moverFrente();\\n  }\\n}\\n\\nfor (let i = 0; i < 25; i++) {\\n  explorar();\\n}`}
+];
+let current=0, score=0, state=null, completed=[false,false,false,false,false,false];
+let mode='flex', audioOn=true, guideIndex=0, supportMode='guided';
+const dirs=[[-1,0],[0,1],[1,0],[0,-1]], arrows=["↑","→","↓","←"];
+const guideTemplates=[
+ ["Observe o ponto de partida e a bandeira.","Conte quantas casas o robô precisa percorrer.","Escreva uma sequência de movimentos e teste."],
+ ["Localize as moedas no mapa.","Use temMoeda() para verificar a posição atual.","Quando houver moeda, use coletaMoeda()."],
+ ["Observe os obstáculos.","Pergunte ao programa: há obstáculo à frente?","Use if/else para escolher entre virar e avançar."],
+ ["Identifique movimentos que se repetem.","Escolha for ou while para repetir ações.","Teste um pequeno número de repetições antes de ampliar."],
+ ["Pense em uma estratégia que possa ser reutilizada.","Crie uma função com essa estratégia.","Use a função dentro de uma repetição ou sequência."],
+ ["Planeje antes de programar.","Teste uma estratégia, observe o resultado e depure.","Seu objetivo é chegar à bandeira e coletar o máximo possível."]
+];
+function cloneLevel(){const l=levels[current];state={r:l.start[0],c:l.start[1],dir:l.dir,energy:l.maxEnergy,maxEnergy:l.maxEnergy,score:0,goal:false,coins:l.coins.map(x=>x.join(',')),obstacles:l.obstacles.map(x=>x.join(',')),running:false};}
+function renderMissions(){document.getElementById('missions').innerHTML=levels.map((l,i)=>`<div class="mission ${i===current?'active':''} ${completed[i]?'done':''} ${i>0&&!completed[i-1]?'locked':''}" onclick="selectLevel(${i})" tabindex="0" role="button" aria-label="Nível ${i+1}: ${l.name}"><div class="num">${completed[i]?'✓':i+1}</div><div><b>${l.name}</b><span>${l.concept}</span></div><div class="${completed[i]?'check':'lock'}">${completed[i]?'✓':(i>0&&!completed[i-1]?'🔒':'▶')}</div></div>`).join('');}
+function render(){const l=levels[current],m=document.getElementById('map');m.innerHTML='';let desc=[];for(let r=0;r<6;r++)for(let c=0;c<6;c++){let cls='cell',content='',parts=[];if(state.obstacles.includes(`${r},${c}`)){cls+=' obstacle';content='🪨';parts.push('obstáculo')}if(state.coins.includes(`${r},${c}`)){cls+=' coin';content='🪙';parts.push('moeda')}if(l.goal[0]===r&&l.goal[1]===c){cls+=' goal';content='🏁';parts.push('objetivo')}if(state.r===r&&state.c===c){cls+=' robot';content='🤖';parts.push('robô')}const d=document.createElement('div');d.className=cls;d.setAttribute('aria-label',`linha ${r+1}, coluna ${c+1}: ${parts.join(', ')||'casa livre'}`);d.innerHTML=content+(state.r===r&&state.c===c?`<span class="robotArrow">${arrows[state.dir]}</span>`:'');m.appendChild(d);if(parts.length)desc.push(`linha ${r+1}, coluna ${c+1}: ${parts.join(', ')}`)}
+ document.getElementById('score').textContent=score+state.score;document.getElementById('energyText').textContent=`${state.energy} / ${state.maxEnergy}`;document.getElementById('energyFill').style.width=(100*state.energy/state.maxEnergy)+'%';document.getElementById('statusEnergy').textContent=`${state.energy} / ${state.maxEnergy}`;document.getElementById('statusScore').textContent=score+state.score;document.getElementById('statusGoal').textContent=state.goal?'Alcançado! 🏆':'Não alcançado';document.getElementById('missionText').textContent=l.mission;document.getElementById('levelTop').textContent=`${current+1} / 6`;document.getElementById('mapHint').textContent=mode==='flex'?'Mapa com descrição textual disponível':'Use seu código para mover o robô';
+ document.getElementById('textMap').innerHTML=`<strong>Descrição do mapa:</strong><br>Posição inicial/atual: linha ${state.r+1}, coluna ${state.c+1}.<br>Objetivo: linha ${l.goal[0]+1}, coluna ${l.goal[1]+1}.<br>${desc.join('<br>')}`;renderMissions();renderGuide();}
+function log(text,type='log'){const c=document.getElementById('console');c.innerHTML+=`<div class="${type}">› ${text}</div>`;c.scrollTop=c.scrollHeight;if(audioOn&&type==='err')speak('Atenção. '+text);}
+function clearConsole(){document.getElementById('console').innerHTML='';}
+function resetLevel(){cloneLevel();guideIndex=0;document.getElementById('code').value=levels[current].example;clearConsole();log('Nível reiniciado.','info');render();if(audioOn&&mode==='flex')speakMission();}
+function selectLevel(i){if(i>0&&!completed[i-1]){log('Conclua o nível anterior para desbloquear este desafio.','warn');return}current=i;resetLevel();}
+function move(){if(state.energy<=0){log('Sem energia!','err');return false}const [dr,dc]=dirs[state.dir],nr=state.r+dr,nc=state.c+dc;if(nr<0||nr>=6||nc<0||nc>=6||state.obstacles.includes(`${nr},${nc}`)){log('Movimento bloqueado: há um obstáculo ou limite do mapa.','err');state.energy--;render();return false}state.r=nr;state.c=nc;state.energy--;log(`Robô movido para ${arrows[state.dir]}.`);if(state.coins.includes(`${nr},${nc}`))log('🪙 Há uma moeda aqui! Use coletaMoeda().','warn');if(levels[current].goal[0]===nr&&levels[current].goal[1]===nc){state.goal=true;log('🏁 Objetivo alcançado!','log')}render();return true}
+function turnLeft(){state.dir=(state.dir+3)%4;state.energy=Math.max(0,state.energy-1);log('Robô virou à esquerda.');render()}
+function turnRight(){state.dir=(state.dir+1)%4;state.energy=Math.max(0,state.energy-1);log('Robô virou à direita.');render()}
+function collect(){let key=`${state.r},${state.c}`;if(state.coins.includes(key)){state.coins=state.coins.filter(x=>x!==key);state.score+=10;log('🪙 Moeda coletada! (+10 pontos)','warn')}else log('Não há moeda nesta posição.','warn');render()}
+function hasCoin(){return state.coins.includes(`${state.r},${state.c}`)}
+function obstacleAhead(){let [dr,dc]=dirs[state.dir],r=state.r+dr,c=state.c+dc;return r<0||r>=6||c<0||c>=6||state.obstacles.includes(`${r},${c}`)}
+function cloneStateForRun(){const l=levels[current];state={r:l.start[0],c:l.start[1],dir:l.dir,energy:l.maxEnergy,maxEnergy:l.maxEnergy,score:0,goal:false,coins:l.coins.map(x=>x.join(',')),obstacles:l.obstacles.map(x=>x.join(',')),running:true};}
+function runCode(){if(state.running)return;state.running=true;cloneStateForRun();clearConsole();log('Iniciando execução...','info');const code=document.getElementById('code').value;try{const cleaned=code.replace(/\/\/.*$/gm,'');if(cleaned.length>7000)throw new Error('Código muito longo para este desafio.');const fn=new Function('moverFrente','virarEsquerda','virarDireita','coletaMoeda','temMoeda','obstaculoFrente','energia','pontos',`"use strict";\n${cleaned}`);fn(move,turnLeft,turnRight,collect,hasCoin,obstacleAhead,state.energy,state.score);if(state.goal){log('Execução finalizada com sucesso!','log');finishLevel()}else if(state.energy<=0)log('Execução terminou: energia esgotada.','err');else log('Execução terminou, mas o objetivo ainda não foi alcançado.','warn')}catch(e){log('Erro no código: '+e.message,'err')}state.running=false;render();}
+function finishLevel(){if(!completed[current]){completed[current]=true;score+=state.score+50;log(`Nível ${current+1} concluído! +50 XP de conclusão.`,'log');speak('Nível concluído!')}setTimeout(()=>{if(current<5){current++;resetLevel()}else{document.getElementById('tip').textContent='🏆 Jornada concluída! Você completou todos os desafios.'}},500)}
+function loadExample(){document.getElementById('code').value=levels[current].example;focusCode()}
+function showHint(){const hints=['Comece contando quantas casas precisa avançar antes de virar.','As moedas ficam no caminho. Use temMoeda() antes de coletaMoeda().','Não avance sem verificar obstaculoFrente().','Use for ou while para repetir movimentos.','Coloque uma estratégia dentro de uma função e reutilize-a.','Crie uma estratégia própria. Teste, observe os erros e melhore.'];document.getElementById('tip').textContent='💡 '+hints[current];}
+function toggleAccessPanel(){const p=document.getElementById('accessPanel'),b=document.getElementById('accessBtn'),open=p.classList.toggle('open');b.setAttribute('aria-expanded',open);}
+function setMode(m){mode=m;document.body.classList.toggle('flexMode',m==='flex');document.getElementById('flexBtn').classList.toggle('active',m==='flex');document.getElementById('adventureBtn').classList.toggle('active',m==='adventure');document.getElementById('flexBtn').setAttribute('aria-pressed',m==='flex');document.getElementById('adventureBtn').setAttribute('aria-pressed',m==='adventure');document.getElementById('modeLabel').textContent=m==='flex'?'Modo Flex':'Modo Aventura';document.getElementById('guidedPanel').style.display=m==='flex'?'block':'none';if(m==='adventure')document.getElementById('textMap').classList.remove('show');render();}
+function renderGuide(){const panel=document.getElementById('guidedPanel');if(mode!=='flex')return;const steps=guideTemplates[current];const level= supportMode==='scaffold'?[steps[0],steps[1],'Estrutura sugerida: '+(current===2?'if (obstaculoFrente()) { ... } else { ... }':current===3?'for (let i = 0; i < N; i++) { ... }':'divida sua solução em pequenos passos.')]:supportMode==='autonomous'?[steps[0]]:steps;guideIndex=Math.min(guideIndex,level.length-1);document.getElementById('guideSteps').innerHTML=level.map((x,i)=>`<p class="step ${i===guideIndex?'active':''}"><strong>Passo ${i+1}:</strong> ${x}</p>`).join('');document.getElementById('guideTitle').textContent=supportMode==='autonomous'?'🧭 Orientação breve':'🧭 Apoio passo a passo';}
+function nextGuide(){const count=document.querySelectorAll('#guideSteps .step').length;guideIndex=Math.min(guideIndex+1,count-1);renderGuide();}
+function previousGuide(){guideIndex=Math.max(guideIndex-1,0);renderGuide();}
+function setSupport(v){supportMode=v;guideIndex=0;renderGuide();}
+function toggleTextMap(){const t=document.getElementById('textMap'),show=t.classList.toggle('show');document.getElementById('textMapBtn').textContent=show?'📋 Ocultar descrição textual':'📋 Mostrar descrição textual';}
+function setFontSize(v){document.documentElement.style.setProperty('--fontScale',v)}
+function setContrast(v){document.body.classList.toggle('highContrast',v==='high')}
+function setMotion(v){document.body.classList.toggle('reduceMotion',v==='reduced')}
+function toggleAudio(){audioOn=!audioOn;document.getElementById('audioBtn').textContent=audioOn?'🔊 Áudio ativado':'🔇 Áudio desativado';}
+function speak(text){if(!audioOn||!('speechSynthesis' in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='pt-BR';u.rate=.9;window.speechSynthesis.speak(u)}
+function speakMission(){speak(`Nível ${current+1}. ${levels[current].name}. ${levels[current].mission}`)}
+function focusCode(){document.getElementById('code').focus()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHelp();if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();runCode()}if(e.key==='F1'){e.preventDefault();openHelp()}});
+function openHelp(){document.getElementById('helpModal').classList.add('open');document.querySelector('#helpModal .close').focus()}
+function closeHelp(){document.getElementById('helpModal').classList.remove('open')}
+cloneLevel();document.getElementById('code').value=levels[0].example;document.body.classList.add('flexMode');render();log('Bem-vindo ao CODEQUEST Flex! O desafio é o mesmo; você pode ajustar a forma de aprender.','info');
+</script>
+</body>
+</html>

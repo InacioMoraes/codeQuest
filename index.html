@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CodeQuest Flex — Desafios de Lógica</title>
+<title>CodeQuest Flex | Desafios de Lógica</title>
 <style>
 :root{
   --bg:#07101f;--panel:#0d1930;--panel2:#101f3b;--line:#243654;
@@ -18,7 +18,7 @@ button{cursor:pointer}
 header{height:78px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:12px 24px}
 .logo{display:flex;align-items:center;gap:12px;min-width:270px}
 .logoMark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#17345b;color:var(--cyan);font-size:21px;font-weight:800}
-.logo h1{margin:0;font-size:27px;letter-spacing:.5px}.logo h1 span{color:var(--green)}
+.logo h1{margin:0;font-size:27px;letter-spacing:.5px}.logo h1 span{ color:var(--green)}
 .logo small{display:block;color:var(--muted);font-size:13px;margin-top:1px}
 .topstats{display:flex;gap:12px;flex:1;justify-content:center}
 .stat{background:rgba(16,31,59,.75);border:1px solid var(--line);border-radius:14px;padding:9px 18px;min-width:180px}
@@ -81,6 +81,23 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px
 @media(max-width:900px){.accessGrid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.accessGrid{grid-template-columns:1fr}.accessBar{align-items:stretch}.accessBar .modeBtn{flex:1}.guided{font-size:14px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Cronômetro, temas e responsividade aprimorada */
+:root{--card:#101f39;--input:#090f19;--header:#08152a}
+body.lightTheme{--bg:#f3f6fb;--panel:#fff;--panel2:#eef3fa;--line:#c9d4e4;--text:#172238;--muted:#52627a;--card:#f7f9fc;--input:#fff;--header:#e8eef7;background:linear-gradient(135deg,#f7faff,#e8eef7);color:var(--text)}
+body.lightTheme .panel,body.lightTheme .stat{background:linear-gradient(145deg,#fff,#edf3fa);box-shadow:0 8px 24px rgba(31,53,86,.12)}
+body.lightTheme .mission,body.lightTheme .status,body.lightTheme .setting{background:#f6f9fd;color:var(--text)}
+body.lightTheme .editorWrap,body.lightTheme textarea,body.lightTheme .console{background:var(--input);color:var(--text)}
+body.lightTheme .accessBar{background:var(--header)}
+body.lightTheme .missionCard,body.lightTheme .guided,body.lightTheme .tip{background:#eef0ff;color:#26304b}
+body.lightTheme .help,body.lightTheme .secondary{color:var(--text);background:#edf3fb}
+.timerBox{display:flex;align-items:center;gap:7px;border:1px solid var(--yellow);border-radius:12px;padding:8px 13px;background:rgba(255,211,78,.08);white-space:nowrap}.timerBox strong{font-variant-numeric:tabular-nums;color:var(--yellow)}.timerBox.warning{border-color:var(--red);animation:pulse 1s infinite}.timerBox.warning strong{color:var(--red)}
+@keyframes pulse{50%{transform:scale(1.03)}}
+.themeBtn{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:10px;padding:10px 12px}
+.questionResult{margin-top:9px;padding:10px;border-radius:8px;display:none;font-weight:700}.questionResult.show{display:block}.questionResult.success{background:#103522;color:#baffd5;border:1px solid var(--green)}.questionResult.error{background:#3a1822;color:#ffd0d8;border:1px solid var(--red)}
+@media(max-width:1250px){main{grid-template-columns:250px minmax(320px,1fr) minmax(360px,1fr)}.topstats{gap:6px}.stat{min-width:140px;padding:8px 12px}}
+@media(max-width:900px){header{height:auto;flex-wrap:wrap}.logo{min-width:230px}.topstats{order:3;width:100%;display:flex}.timerBox{margin-left:auto}main{grid-template-columns:1fr}.right{grid-column:auto}.map{max-width:650px;margin:auto}.section{padding-left:10px;padding-right:10px}}
+@media(max-width:560px){header{padding:10px}.logo h1{font-size:22px}.logoMark{width:36px;height:36px}.levelBadge{font-size:12px;padding:8px 10px}.timerBox{font-size:12px;padding:7px 9px}.topstats{display:grid;grid-template-columns:1fr 1fr}.stat{min-width:0}.accessBar{padding:8px}.accessBar .modeBtn{flex:1;min-width:130px}.titleRow{align-items:flex-start;gap:8px;flex-wrap:wrap}.actions{flex-direction:column}.run,.secondary{width:100%}.map{padding:4px}.cell{font-size:21px}.cell.robot{font-size:28px}.cell.obstacle{font-size:24px}.cell.coin,.cell.goal{font-size:20px}.statusGrid{grid-template-columns:1fr}.console{height:190px}textarea{height:260px}}
 </style>
 </head>
 <body>
@@ -91,6 +108,8 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px
     <div class="stat"><b>⚡ Energia <span id="energyText">10 / 10</span></b><div class="energyBar"><div id="energyFill" class="energyFill"></div></div></div>
   </div>
   <div class="levelBadge">☰ NÍVEL <b id="levelTop">1 / 6</b></div>
+  <div class="timerBox" id="timerBox" aria-live="polite">⏱️ <strong id="timer">05:00</strong></div>
+  <button class="themeBtn" id="themeBtn" onclick="toggleTheme()" aria-label="Alternar tema">☀️ Tema claro</button>
   <button class="help" onclick="openHelp()">❔ Como jogar</button>
 </header>
 <div class="accessBar" aria-label="Controles de acessibilidade e modo de aprendizagem">
@@ -151,6 +170,7 @@ button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px
         <button class="secondary" onclick="loadExample()">Exemplo</button>
       </div>
       <div class="editorWrap"><label class="visually-hidden" for="code">Editor de código</label><textarea id="code" aria-label="Editor de código JavaScript" spellcheck="false"></textarea></div>
+      <div class="questionResult" id="questionResult" role="status" aria-live="polite"></div>
       <div class="actions">
         <button class="run" onclick="runCode()">▶ EXECUTAR CÓDIGO</button>
         <button class="secondary" onclick="showHint()">💡 DICAS</button>
@@ -213,7 +233,7 @@ const levels=[
   example:`// PROJETO FINAL\\n// Crie sua própria solução!\\n// Requisitos: chegar à bandeira e coletar moedas.\\n\\nfunction explorar() {\\n  if (obstaculoFrente()) {\\n    virarDireita();\\n  } else {\\n    moverFrente();\\n  }\\n}\\n\\nfor (let i = 0; i < 25; i++) {\\n  explorar();\\n}`}
 ];
 let current=0, score=0, state=null, completed=[false,false,false,false,false,false];
-let mode='flex', audioOn=true, guideIndex=0, supportMode='guided';
+let mode='flex', audioOn=true, guideIndex=0, supportMode='guided', theme='dark', timerId=null, timeLeft=300, questionAnswered=false;
 const dirs=[[-1,0],[0,1],[1,0],[0,-1]], arrows=["↑","→","↓","←"];
 const guideTemplates=[
  ["Observe o ponto de partida e a bandeira.","Conte quantas casas o robô precisa percorrer.","Escreva uma sequência de movimentos e teste."],
@@ -230,7 +250,7 @@ function render(){const l=levels[current],m=document.getElementById('map');m.inn
  document.getElementById('textMap').innerHTML=`<strong>Descrição do mapa:</strong><br>Posição inicial/atual: linha ${state.r+1}, coluna ${state.c+1}.<br>Objetivo: linha ${l.goal[0]+1}, coluna ${l.goal[1]+1}.<br>${desc.join('<br>')}`;renderMissions();renderGuide();}
 function log(text,type='log'){const c=document.getElementById('console');c.innerHTML+=`<div class="${type}">› ${text}</div>`;c.scrollTop=c.scrollHeight;if(audioOn&&type==='err')speak('Atenção. '+text);}
 function clearConsole(){document.getElementById('console').innerHTML='';}
-function resetLevel(){cloneLevel();guideIndex=0;document.getElementById('code').value=levels[current].example;clearConsole();log('Nível reiniciado.','info');render();if(audioOn&&mode==='flex')speakMission();}
+function resetLevel(){cloneLevel();guideIndex=0;questionAnswered=false;document.getElementById('code').value=levels[current].example;clearConsole();hideResult();startTimer();log('Nível reiniciado.','info');render();if(audioOn&&mode==='flex')speakMission();}
 function selectLevel(i){if(i>0&&!completed[i-1]){log('Conclua o nível anterior para desbloquear este desafio.','warn');return}current=i;resetLevel();}
 function move(){if(state.energy<=0){log('Sem energia!','err');return false}const [dr,dc]=dirs[state.dir],nr=state.r+dr,nc=state.c+dc;if(nr<0||nr>=6||nc<0||nc>=6||state.obstacles.includes(`${nr},${nc}`)){log('Movimento bloqueado: há um obstáculo ou limite do mapa.','err');state.energy--;render();return false}state.r=nr;state.c=nc;state.energy--;log(`Robô movido para ${arrows[state.dir]}.`);if(state.coins.includes(`${nr},${nc}`))log('🪙 Há uma moeda aqui! Use coletaMoeda().','warn');if(levels[current].goal[0]===nr&&levels[current].goal[1]===nc){state.goal=true;log('🏁 Objetivo alcançado!','log')}render();return true}
 function turnLeft(){state.dir=(state.dir+3)%4;state.energy=Math.max(0,state.energy-1);log('Robô virou à esquerda.');render()}
@@ -239,8 +259,15 @@ function collect(){let key=`${state.r},${state.c}`;if(state.coins.includes(key))
 function hasCoin(){return state.coins.includes(`${state.r},${state.c}`)}
 function obstacleAhead(){let [dr,dc]=dirs[state.dir],r=state.r+dr,c=state.c+dc;return r<0||r>=6||c<0||c>=6||state.obstacles.includes(`${r},${c}`)}
 function cloneStateForRun(){const l=levels[current];state={r:l.start[0],c:l.start[1],dir:l.dir,energy:l.maxEnergy,maxEnergy:l.maxEnergy,score:0,goal:false,coins:l.coins.map(x=>x.join(',')),obstacles:l.obstacles.map(x=>x.join(',')),running:true};}
-function runCode(){if(state.running)return;state.running=true;cloneStateForRun();clearConsole();log('Iniciando execução...','info');const code=document.getElementById('code').value;try{const cleaned=code.replace(/\/\/.*$/gm,'');if(cleaned.length>7000)throw new Error('Código muito longo para este desafio.');const fn=new Function('moverFrente','virarEsquerda','virarDireita','coletaMoeda','temMoeda','obstaculoFrente','energia','pontos',`"use strict";\n${cleaned}`);fn(move,turnLeft,turnRight,collect,hasCoin,obstacleAhead,state.energy,state.score);if(state.goal){log('Execução finalizada com sucesso!','log');finishLevel()}else if(state.energy<=0)log('Execução terminou: energia esgotada.','err');else log('Execução terminou, mas o objetivo ainda não foi alcançado.','warn')}catch(e){log('Erro no código: '+e.message,'err')}state.running=false;render();}
+function runCode(){if(state.running||questionAnswered)return;state.running=true;cloneStateForRun();clearConsole();log('Iniciando execução...','info');const code=document.getElementById('code').value;let ok=false;try{const cleaned=code.replace(/\/\/.*$/gm,'');if(cleaned.length>7000)throw new Error('Código muito longo para este desafio.');const fn=new Function('moverFrente','virarEsquerda','virarDireita','coletaMoeda','temMoeda','obstaculoFrente','energia','pontos',`"use strict";\n${cleaned}`);fn(move,turnLeft,turnRight,collect,hasCoin,obstacleAhead,state.energy,state.score);if(state.goal){ok=true;log('Execução finalizada com sucesso!','log');showResult(true,'Resposta correta! Você alcançou o objetivo.');finishLevel()}else if(state.energy<=0){log('Execução terminou: energia esgotada.','err');showResult(false,'Resposta incorreta: a energia acabou antes de alcançar o objetivo.')}else{log('Execução terminou, mas o objetivo ainda não foi alcançado.','warn');showResult(false,'Resposta incorreta: o objetivo ainda não foi alcançado.')}}catch(e){log('Erro no código: '+e.message,'err');showResult(false,'Resposta incorreta: revise o código e tente novamente.')}state.running=false;questionAnswered=true;stopTimer();if(audioOn)speak(ok?'Acerto! Objetivo alcançado.':'Erro. Revise sua estratégia.');render();}
 function finishLevel(){if(!completed[current]){completed[current]=true;score+=state.score+50;log(`Nível ${current+1} concluído! +50 XP de conclusão.`,'log');speak('Nível concluído!')}setTimeout(()=>{if(current<5){current++;resetLevel()}else{document.getElementById('tip').textContent='🏆 Jornada concluída! Você completou todos os desafios.'}},500)}
+function formatTime(v){const m=String(Math.floor(v/60)).padStart(2,'0'),s=String(v%60).padStart(2,'0');return `${m}:${s}`;}
+function updateTimer(){document.getElementById('timer').textContent=formatTime(timeLeft);document.getElementById('timerBox').classList.toggle('warning',timeLeft<=30);}
+function startTimer(){stopTimer();timeLeft=300;updateTimer();timerId=setInterval(()=>{if(timeLeft>0){timeLeft--;updateTimer();}else{stopTimer();if(!questionAnswered){questionAnswered=true;showResult(false,'Tempo esgotado! Reinicie o nível e tente novamente.');log('⏱️ Tempo esgotado.','err');if(audioOn)speak('Tempo esgotado.');}}},1000);}
+function stopTimer(){if(timerId){clearInterval(timerId);timerId=null;}}
+function showResult(success,text){const el=document.getElementById('questionResult');el.className='questionResult show '+(success?'success':'error');el.textContent=(success?'✅ ':'❌ ')+text;}
+function hideResult(){const el=document.getElementById('questionResult');el.className='questionResult';el.textContent='';}
+function toggleTheme(){theme=theme==='dark'?'light':'dark';document.body.classList.toggle('lightTheme',theme==='light');document.getElementById('themeBtn').textContent=theme==='light'?'🌙 Tema escuro':'☀️ Tema claro';}
 function loadExample(){document.getElementById('code').value=levels[current].example;focusCode()}
 function showHint(){const hints=['Comece contando quantas casas precisa avançar antes de virar.','As moedas ficam no caminho. Use temMoeda() antes de coletaMoeda().','Não avance sem verificar obstaculoFrente().','Use for ou while para repetir movimentos.','Coloque uma estratégia dentro de uma função e reutilize-a.','Crie uma estratégia própria. Teste, observe os erros e melhore.'];document.getElementById('tip').textContent='💡 '+hints[current];}
 function toggleAccessPanel(){const p=document.getElementById('accessPanel'),b=document.getElementById('accessBtn'),open=p.classList.toggle('open');b.setAttribute('aria-expanded',open);}
@@ -260,7 +287,7 @@ function focusCode(){document.getElementById('code').focus()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeHelp();if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();runCode()}if(e.key==='F1'){e.preventDefault();openHelp()}});
 function openHelp(){document.getElementById('helpModal').classList.add('open');document.querySelector('#helpModal .close').focus()}
 function closeHelp(){document.getElementById('helpModal').classList.remove('open')}
-cloneLevel();document.getElementById('code').value=levels[0].example;document.body.classList.add('flexMode');render();log('Bem-vindo ao CODEQUEST Flex! O desafio é o mesmo; você pode ajustar a forma de aprender.','info');
+cloneLevel();document.getElementById('code').value=levels[0].example;startTimer();document.body.classList.add('flexMode');render();log('Bem-vindo ao CODEQUEST Flex! O desafio é o mesmo; você pode ajustar a forma de aprender.','info');
 </script>
 </body>
 </html>
